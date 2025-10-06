@@ -6,9 +6,9 @@ function loadNotes() {
   return savedNotes ? JSON.parse(savedNotes) : []
 }
 
-function openNoteDialog(noteId) {
+function openNoteDialog(noteId = null) {
   const dialog = document.getElementById("noteDialog");
-  const titleInput = document.getElementById('noteTitle');
+  const titleInput = document.getElementById("noteTitle");
   const contentInput = document.getElementById("noteContent");
   
 
@@ -26,31 +26,70 @@ function openNoteDialog(noteId) {
     contentInput.value = '' ;
   }
 
-  dialog.showModal()
-  titleInput.focus()
+  dialog.showModal();
 }
 
+
+function countWords(text) {
+  return text.trim().split(/\s+/).filter(Boolean).length;
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  const contentInput = document.getElementById("noteContent");
+  const wordCounter = document.createElement("small");
+  wordCounter.style.display = "block";
+  wordCounter.style.marginTop = "0.5rem";
+  wordCounter.style.color = "#666";
+
+  contentInput.parentNode.appendChild(wordCounter);
+
+  contentInput.addEventListener("input", function () {
+    const wordCount = countWords(contentInput.value);
+    wordCounter.textContent = `${wordCount}/400 words`;
+
+    
+  });
+});
+
+
 function saveNote(event) {
-  event.preventDefault()
+  event.preventDefault();
 
   const title = document.getElementById("noteTitle").value;
   const content = document.getElementById("noteContent").value;
 
-  note.unshift(
-    {
-      id : generateId(),
+  const wordCount = countWords(content);
+  if (wordCount > WORD_LIMIT) {
+    alert("Your note exceeds the 400 word limit! Please shorten it.");
+    return;
+  }
+
+  if (editingNoteId) {
+    const noteIndex = note.findIndex(n => n.id === editingNoteId);
+    note[noteIndex] = {
+      ...note[noteIndex],
       title: title,
       content: content
-    }
-  ) 
+    };
+  } else {
+    note.unshift({
+      id: generateId(),
+      title: title,
+      content: content
+    });
+  }
 
-  saveNotes();
+  closeNoteDialog();
+  saveNotes(); 
   renderNotes();
 }
+
 
 function generateId() {
   return Date.now().toString();
 }
+
+
 
 function saveNotes(){
   localStorage.setItem("quickNotes", JSON.stringify(note))
@@ -76,21 +115,17 @@ function renderNotes() {
     return
   }
 
-  notesContainer.innerHTML = note.map(note => `
+  notesContainer.innerHTML = note.map(n => `
     <div class="note-card">
-    <h3 class="note-title">${note.title}</h3>
-    <p class="note-content">${note.content}</p>
-    <div class="note-actions">
-        <button class="edit-btn" onclick="openNoteDialog(${note.id})" title="Edit Note">
-          ✏️
-        </button>
-        <button class="delete-btn" onclick="deleteNote(${note.id})" title="Delete Note">
-          x
-        </button>
+      <h3 class="note-title">${n.title}</h3>
+      <p class="note-content">${n.content}</p>
+      <div class="note-actions">
+        <button class="edit-btn" onclick="openNoteDialog('${n.id}')" title="Edit Note">✏️</button>
+        <button class="delete-btn" onclick="deleteNote('${n.id}')" title="Delete Note">x</button>
       </div>
     </div>
-    `).join('');
-
+  `).join('');
+  
 }
 
 
@@ -99,6 +134,12 @@ function closeNoteDialog() {
   document.getElementById("noteDialog").close();
 
 }
+const themeBtn = document.querySelector(".theme-button");
+
+themeBtn.addEventListener("click", function() {
+  document.body.classList.toggle("darktheme");
+  themeBtn.textContent = document.body.classList.contains("darktheme") ? "☀️" : "🌙" ;
+});
 
 document.addEventListener( 'DOMContentLoaded', function() {
 
@@ -107,7 +148,6 @@ document.addEventListener( 'DOMContentLoaded', function() {
   renderNotes();
 
   document.getElementById("noteForm").addEventListener("submit", saveNote);
+  document.getElementById("themeBtn").addEventListener("click", toggleTheme)
 
-}
-
-)
+})

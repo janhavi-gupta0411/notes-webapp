@@ -10,11 +10,14 @@
     <h1>Quick Notes</h1>
     <div>
       <button class="add-note-btn" onclick="openNoteDialog()">+ Add Note</button>
-      <button class="theme-button">🌙</button>
+      <button class="theme-button" id="themeBtn">🌙</button>
     </div>
   </header>
   <main class="notes-grid" id="notesContainer" >
-
+    <section id="loginSection">
+      <input type="text" id="usernameInput" placeholder="Enter your name" aria-label="User name" >
+      <button id="loginBtn">Login</button>
+    </section>
   </main>
   <dialog id="noteDialog" >
 
