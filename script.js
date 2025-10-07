@@ -91,7 +91,7 @@ function renderNotes() {
       <p class="note-content">${n.content}</p>
       <div class="note-actions">
         <button class="edit-btn" onclick="openNoteDialog('${n.id}')">✏️</button>
-        <button class="delete-btn" onclick="deleteNote('${n.id}')">🗑️</button>
+        <button class="delete-btn" onclick="deleteNote('${n.id}')">X</button>
       </div>
     </div>`).join("");
 }
@@ -106,6 +106,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const themeBtn = document.getElementById("themeBtn");
   themeBtn.addEventListener("click", function () {
     document.body.classList.toggle("darktheme");
-    themeBtn.textContent = document.body.classList.contains("darktheme") ? "☀️" : "🌙";
+    themeBtn.textContent = document.body.classList.contains("darktheme") ? "🌙" :  "☀️" ;
   });
 });
