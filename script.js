@@ -15,6 +15,41 @@ function generateId() {
   return Date.now().toString();
 }
 
+function showLoginPage() {
+  document.getElementById("loginSection").style.display = "block";
+  document.getElementById("notesContainer").style.display = "none";
+}
+
+function showNotesPage() {
+  document.getElementById("loginSection").style.display = "none";
+  document.getElementById("notesContainer").style.display = "grid";
+
+  const username = localStorage.getItem("username");
+  const welcome = document.getElementById("welcomeMessage");
+  if (username) {
+    welcome.textContent = `Hello, ${username}`;
+  }
+}
+
+showLoginPage();
+const loginBtn = document.getElementById("loginBtn");
+const usernameInput = document.getElementById("usernameInput");
+
+const storedUser = localStorage.getItem("username");
+if (storedUser) {
+  showNotesPage();
+} else {
+  showLoginPage();
+}
+
+loginBtn.addEventListener("click", function () {
+  const username = usernameInput.value.trim();
+  if (username !== "") {
+    localStorage.setItem("username", username);
+    showNotesPage();
+  }
+});
+
 function openNoteDialog(noteId = null) {
   const dialog = document.getElementById("noteDialog");
   const titleInput = document.getElementById("noteTitle");
@@ -40,8 +75,8 @@ function closeNoteDialog() {
   document.getElementById("noteDialog").close();
 }
 
-function countWords(text) {
-  return text.trim().split(/\s+/).filter(Boolean).length;
+function countWords(para) {
+  return para.trim().split(/\s+/).filter(Boolean).length;
 }
 
 function saveNote(event) {
@@ -100,12 +135,20 @@ document.addEventListener("DOMContentLoaded", function () {
   note = loadNotes();
   renderNotes();
 
+  
+  const themeBtn = document.getElementById("themeBtn");
   const noteForm = document.getElementById("noteForm");
+
+ 
+
+ 
+
   noteForm.addEventListener("submit", saveNote);
 
-  const themeBtn = document.getElementById("themeBtn");
   themeBtn.addEventListener("click", function () {
     document.body.classList.toggle("darktheme");
-    themeBtn.textContent = document.body.classList.contains("darktheme") ? "🌙" :  "☀️" ;
+    themeBtn.textContent = document.body.classList.contains("darktheme")
+      ? "🌙"
+      : "☀️";
   });
 });
